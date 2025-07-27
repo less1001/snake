@@ -1,11 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Next.js 14+ 默认启用 App Router，不需要 experimental.appDir
-  output: 'export',
-  trailingSlash: true,
-  images: {
-    unoptimized: true
-  }
 }
 
 module.exports = nextConfig
