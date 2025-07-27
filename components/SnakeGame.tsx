@@ -35,100 +35,184 @@ const SnakeGame: React.FC = () => {
     isMobile: gameState.isMobile
   })
   
-  return (
-    <div className={`min-h-screen bg-gradient-to-br from-game-bg via-game-bg-2 to-game-bg-3 text-white ${
-      gameState.isMobile ? 'pb-32' : ''
-    }`}>
-      {/* 标题 */}
-      <div className={`text-center ${gameState.isMobile ? 'py-4' : 'py-8'}`}>
-        <h1 className={`font-bold text-snake-head animate-title-glow mb-2 ${
-          gameState.isMobile ? 'text-3xl' : 'text-5xl'
-        }`}>
-          贪吃蛇
-        </h1>
-        <p className={`text-snake-body ${gameState.isMobile ? 'text-lg' : 'text-xl'}`}>
-          SNAKE GAME
-        </p>
-      </div>
-      
-      {/* 游戏主体 */}
-      <div className={`container mx-auto px-4 ${
-        gameState.isMobile 
-          ? 'flex flex-col items-center space-y-4' 
-          : 'grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl'
-      }`}>
+  if (gameState.isMobile) {
+    // 移动端布局 - 一屏显示所有内容
+    return (
+      <div className="h-screen bg-gradient-to-br from-game-bg via-game-bg-2 to-game-bg-3 text-white flex flex-col overflow-hidden">
+        {/* 标题 - 紧凑 */}
+        <div className="text-center py-2">
+          <h1 className="text-2xl font-bold text-snake-head mb-1">贪吃蛇</h1>
+          <p className="text-sm text-snake-body">SNAKE GAME</p>
+        </div>
         
-        {/* 左侧面板 - 桌面端 */}
-        {!gameState.isMobile && (
-          <div className="space-y-6">
-            <ScorePanel
-              score={gameState.score}
-              highScore={gameState.highScore}
-              level={gameState.level}
-              snakeLength={gameState.snake.length}
-              isNewHighScore={gameState.isNewHighScore}
-            />
-          </div>
-        )}
-        
-        {/* 游戏区域 */}
-        <div className="flex flex-col items-center space-y-4">
+        {/* 主要内容区域 */}
+        <div className="flex-1 flex flex-col items-center justify-center px-4 space-y-3">
+          {/* 游戏板 */}
           <GameBoard
             snake={gameState.snake}
             food={gameState.food}
             isMobile={gameState.isMobile}
           />
           
-          {/* 移动端分数面板 - 紧凑版 */}
-          {gameState.isMobile && (
-            <div className="w-full max-w-sm">
-              <div className="glass-card rounded-lg p-3">
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div className="text-center">
-                    <div className="text-gray-400">分数</div>
-                    <div className="text-snake-head font-bold">{gameState.score}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-gray-400">最高分</div>
-                    <div className="text-snake-body font-bold">{gameState.highScore}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-gray-400">长度</div>
-                    <div className="text-white font-bold">{gameState.snake.length}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-gray-400">等级</div>
-                    <div className="text-snake-body font-bold">{gameState.level}</div>
-                  </div>
+          {/* 分数信息 - 水平排列 */}
+          <div className="w-full max-w-xs">
+            <div className="glass-card rounded-lg p-2">
+              <div className="grid grid-cols-4 gap-2 text-xs">
+                <div className="text-center">
+                  <div className="text-gray-400">分数</div>
+                  <div className="text-snake-head font-bold text-sm">{gameState.score}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-gray-400">最高</div>
+                  <div className="text-snake-body font-bold text-sm">{gameState.highScore}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-gray-400">长度</div>
+                  <div className="text-white font-bold text-sm">{gameState.snake.length}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-gray-400">等级</div>
+                  <div className="text-snake-body font-bold text-sm">{gameState.level}</div>
                 </div>
               </div>
+            </div>
+          </div>
+          
+          {/* 触摸控制 - 内嵌在页面中 */}
+          {gameState.gameStatus === 'playing' && (
+            <div className="glass-card rounded-xl p-2">
+              {/* 方向控制 */}
+              <div className="grid grid-cols-3 gap-1 mb-2">
+                <div></div>
+                <button
+                  className="w-8 h-8 rounded glass-card flex items-center justify-center text-white font-bold text-sm active:scale-95 btn-glow"
+                  onClick={() => changeDirection('UP')}
+                >
+                  ↑
+                </button>
+                <div></div>
+                
+                <button
+                  className="w-8 h-8 rounded glass-card flex items-center justify-center text-white font-bold text-sm active:scale-95 btn-glow"
+                  onClick={() => changeDirection('LEFT')}
+                >
+                  ←
+                </button>
+                <div className="w-8 h-8"></div>
+                <button
+                  className="w-8 h-8 rounded glass-card flex items-center justify-center text-white font-bold text-sm active:scale-95 btn-glow"
+                  onClick={() => changeDirection('RIGHT')}
+                >
+                  →
+                </button>
+                
+                <div></div>
+                <button
+                  className="w-8 h-8 rounded glass-card flex items-center justify-center text-white font-bold text-sm active:scale-95 btn-glow"
+                  onClick={() => changeDirection('DOWN')}
+                >
+                  ↓
+                </button>
+                <div></div>
+              </div>
+              
+              {/* 控制按钮 */}
+              <div className="flex gap-2 justify-center">
+                <button
+                  className="px-3 py-1 bg-snake-body text-white rounded text-xs font-semibold btn-glow"
+                  onClick={pauseGame}
+                >
+                  暂停
+                </button>
+                <button
+                  className="px-3 py-1 bg-food text-game-bg rounded text-xs font-semibold btn-glow"
+                  onClick={restartGame}
+                >
+                  重启
+                </button>
+              </div>
+            </div>
+          )}
+          
+          {/* 非游戏状态的控制按钮 */}
+          {gameState.gameStatus !== 'playing' && (
+            <div className="flex gap-2">
+              <button
+                onClick={gameState.gameStatus === 'paused' ? startGame : startGame}
+                className="px-4 py-2 bg-snake-head text-game-bg font-bold rounded-lg btn-glow"
+              >
+                {gameState.gameStatus === 'paused' ? '继续' : '开始'}
+              </button>
+              {gameState.gameStatus !== 'idle' && (
+                <button
+                  onClick={restartGame}
+                  className="px-4 py-2 bg-snake-body text-white font-semibold rounded-lg btn-glow"
+                >
+                  重新开始
+                </button>
+              )}
             </div>
           )}
         </div>
         
-        {/* 右侧面板 - 桌面端 */}
-        {!gameState.isMobile && (
-          <div className="space-y-6">
-            <ControlPanel
-              gameStatus={gameState.gameStatus}
-              onStart={startGame}
-              onPause={pauseGame}
-              onRestart={restartGame}
-              isMobile={gameState.isMobile}
-            />
-          </div>
-        )}
+        {/* 游戏覆盖层 */}
+        <GameOverlay
+          gameStatus={gameState.gameStatus}
+          score={gameState.score}
+          highScore={gameState.highScore}
+          isNewHighScore={gameState.isNewHighScore}
+          onStart={startGame}
+          onRestart={restartGame}
+        />
+      </div>
+    )
+  }
+
+  // 桌面端布局保持不变
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-game-bg via-game-bg-2 to-game-bg-3 text-white">
+      {/* 标题 */}
+      <div className="text-center py-8">
+        <h1 className="text-5xl font-bold text-snake-head animate-title-glow mb-2">
+          贪吃蛇
+        </h1>
+        <p className="text-xl text-snake-body">SNAKE GAME</p>
       </div>
       
-      {/* 移动端触摸控制 - 只在游戏进行时显示 */}
-      {gameState.isMobile && gameState.gameStatus === 'playing' && (
-        <TouchControls
-          onDirectionChange={changeDirection}
-          onPause={pauseGame}
-          onRestart={restartGame}
-          disabled={gameState.gameStatus !== 'playing'}
-        />
-      )}
+      {/* 游戏主体 */}
+      <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl">
+        
+        {/* 左侧面板 */}
+        <div className="space-y-6">
+          <ScorePanel
+            score={gameState.score}
+            highScore={gameState.highScore}
+            level={gameState.level}
+            snakeLength={gameState.snake.length}
+            isNewHighScore={gameState.isNewHighScore}
+          />
+        </div>
+        
+        {/* 游戏区域 */}
+        <div className="flex flex-col items-center space-y-6">
+          <GameBoard
+            snake={gameState.snake}
+            food={gameState.food}
+            isMobile={gameState.isMobile}
+          />
+        </div>
+        
+        {/* 右侧面板 */}
+        <div className="space-y-6">
+          <ControlPanel
+            gameStatus={gameState.gameStatus}
+            onStart={startGame}
+            onPause={pauseGame}
+            onRestart={restartGame}
+            isMobile={gameState.isMobile}
+          />
+        </div>
+      </div>
       
       {/* 游戏覆盖层 */}
       <GameOverlay
