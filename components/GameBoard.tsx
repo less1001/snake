@@ -12,8 +12,8 @@ interface GameBoardProps {
 }
 
 const GameBoard: React.FC<GameBoardProps> = ({ snake, food, isMobile }) => {
-  const cellSize = isMobile ? 'w-4 h-4' : 'w-6 h-6'
-  const boardSize = isMobile ? 'w-80 h-80' : 'w-96 h-96'
+  const cellSize = isMobile ? 'w-3 h-3' : 'w-6 h-6'
+  const boardSize = isMobile ? 'w-60 h-60' : 'w-96 h-96'
   
   const renderCell = (x: number, y: number) => {
     const position = { x, y }
